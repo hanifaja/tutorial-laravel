@@ -1,0 +1,5 @@
+1. Download composser
+2. Install Laravel
+composer create-project laravel/laravel:^9.0 <nama folder>
+cd (nama folder)
+php artisan serve
