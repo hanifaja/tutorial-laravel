@@ -6,6 +6,7 @@ use App\Models\Student;
 use App\Models\ClassRoom;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class StudentController extends Controller
 {
@@ -114,9 +115,77 @@ class StudentController extends Controller
         // select * from student where class = Hanifku
 
         // eager loading
-        $class = ClassRoom::with('students')->get(); // cara request data
+        $student = Student::get(); // cara request data
         // select * from table class
         // selecr * from student where class in (hanifku, dll)
-        return view('classroom', ['classList' => $class]);
+        return view('student', ['studentList' => $student]);
+    }
+
+    public function show($id){
+        $student = Student::with(['class.homeroomTeacher'])->findOrFail($id);
+        return view('student-detail', ['student' => $student]);
+    }
+
+    public function create(){
+        $class = ClassRoom::select('id', 'name')->get();
+        return view('student-add', ['class' => $class]);
+    }
+
+    public function store(Request $request){
+
+        $validate = $request->validate([
+            'nis' => 'unique:students|max:10',
+            'name' => 'max:10'
+        ]);
+       
+        // $student = new student;
+        // $student->name = $request->name;
+        // $student->gender = $request->gender;
+        // $student->nis = $request->nis;
+        // $student->class_id = $request->class_id;
+        // $student->save();
+
+        // Mass asigment
+        $student = Student::create($request->all());
+
+        if($student){
+            Session::flash('status', 'succsess');
+            Session::flash('message', 'add new student succsess');
+        }
+
+        return redirect('/students');
+    }
+
+    public function edit(Request $request, $id){
+        $student = Student::with('class')->findOrFail($id);
+        $class = ClassRoom::where('id', '!=', $student->class_id)->get(['id','name']);
+        return view('student-edit', ['student' => $student, 'class' => $class]);
+    }
+
+    public function update(Request $request, $id){
+        $student = Student::findOrFail($id);
+        
+        $student->update($request->all());
+        return redirect('/students');
+    }
+
+    public function delete($id){
+        $student = Student::findOrFail($id);
+        return view('student-delete', ['student' => $student]);
+    }
+    
+    public function destroy($id){
+    //    $deleteStudent = DB::table('students')->where('id', $id)->delete();
+
+    // Eloquent
+        $deleteStudent = Student::findOrFail($id);
+        $deleteStudent->delete();
+
+        if($deleteStudent){
+            Session::flash('status', 'succsess');
+            Session::flash('message', 'delete student succsess');
+        }
+       
+       return redirect('/students');
     }
 }

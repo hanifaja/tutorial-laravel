@@ -1,32 +1,31 @@
 @extends('layouts.mainlayout')
 
-@section('tittle', 'Class')
+@section('tittle', 'Teacher')
 
 @section('content')
-        <h1>ini halaman Class</h1>
-        <h3>Class List</h3>
+        <h1>ini halaman teacher</h1>
+        <h2>Selamat datang di halaman teacher</h2>
 
         <div class="my-5">
-            <a href="class-add" class="btn btn-primary">Add Class</a>
+            <a href="" class="btn btn-primary">Add Teacher</a>
         </div>
 
         <table class="table">
             <thead>
                 <tr>
-                    <th>No.</th>
-                    <th>Name</th>
+                    <th>No</th>
+                    <th>Nama</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($classList as $data)
+                @foreach ($teacherList as $item)
                     <tr>
                         <td>{{$loop->iteration}}</td>
-                        <td>{{$data->name}}</td>
-                        <td><a href="class-detail/{{$data->id}}">Detail</a></td>
+                        <td>{{$item->name}}</td>
+                        <td><a href="teacher-detail/{{$item->id}}">Detail</a></td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
-    
 @endsection
